@@ -1,0 +1,94 @@
+version: 2.1
+defaults: &defaults
+  working_directory: /tmp/persist_to_workspace
+  docker:
+    - image: circleci/node:10
+      environment:
+        TERM: xterm
+
+jobs:
+  checkout:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: pwd
+      - run: ls -lart
+      - restore_cache:
+          keys:
+            - v1-dep-cache-{{ checksum "package.json" }}
+            - v1-dep-cache
+     - run:
+        name: Checkout
+        command: |
+          echo "Checking out..."
+          echo "Checkout Done!"
+      - save_cache:
+          key: v1-dep-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: /tmp/persist_to_workspace
+          paths:
+            - .
+
+  build-qas:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+         at: /tmp/persist_to_workspace
+      - run: pwd
+      - run: ls -lart
+     - run:
+        name: Build QAS
+        command: |
+           echo "Building QAS..."
+           echo "Building Done!"
+
+  request-approval-qas:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/persist_to_workspace
+      - run:
+          name: Request Approval QAS
+          command: |
+            echo "Requesting Approval QAS"
+            echo "Request Approval QAS Done!"
+
+  deploy-qas:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/persist_to_workspace
+      - run: pwd
+      - run: ls -lart
+      - run:
+          name: Deploy QAS
+          command: |
+            echo "Deploying QAS"
+            echo "Deploy QAS Done!"
+
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - checkout:
+          context: org-global
+      - build-qas:
+          context: org-global
+          filters:
+            branches: { only: 'master' }
+          requires:
+            - checkout
+      - request-approval-qas:
+          context: org-global
+          filters:
+            branches: { only: 'master' }
+          requeries:
+            - build-qas
+      - approve-qas:
+          type: approval
+          filters:
+            branches: { only: 'master' }
+          requires:
+            - request-approval-qas
