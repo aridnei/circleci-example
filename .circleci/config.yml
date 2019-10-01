@@ -18,10 +18,10 @@ jobs:
             - v1-dep-cache-{{ checksum "package.json" }}
             - v1-dep-cache
       - run:
-        name: Checkout
-        command: |
-          echo "Checking out..."
-          echo "Checkout Done!"
+          name: Checkout
+          command: |
+            echo "Checking out..."
+            echo "Checkout Done!"
       - save_cache:
           key: v1-dep-cache-{{ checksum "package.json" }}
           paths:
@@ -35,14 +35,14 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-         at: /tmp/persist_to_workspace
+          at: /tmp/persist_to_workspace
       - run: pwd
       - run: ls -lart
       - run:
-        name: Build QAS
-        command: |
-           echo "Building QAS..."
-           echo "Building Done!"
+          name: Build QAS
+          command: |
+            echo "Building QAS..."
+            echo "Building Done!"
 
   request-approval-qas:
     <<: *defaults
