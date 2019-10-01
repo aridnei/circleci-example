@@ -42,7 +42,20 @@ jobs:
           name: Build QAS
           command: |
             echo "Building QAS..."
-            echo "Building Done!"
+            echo "Build QAS Done!"
+
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/persist_to_workspace
+      - run: pwd
+      - run: ls -lart
+      - run:
+          name: Test All
+          command: |
+            echo "Testing All..."
+            echo "Test All Done!"
 
   request-approval-qas:
     <<: *defaults
@@ -68,6 +81,43 @@ jobs:
             echo "Deploying QAS"
             echo "Deploy QAS Done!"
 
+  build-stg:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/persist_to_workspace
+      - run: pwd
+      - run: ls -lart
+      - run:
+          name: Build STG
+          command: |
+            echo "Building STG..."
+            echo "Building STG Done!"
+
+  request-approval-stg:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/persist_to_workspace
+      - run:
+          name: Request Approval STG
+          command: |
+            echo "Requesting Approval STG"
+            echo "Request Approval STG Done!"
+
+  deploy-stg:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/persist_to_workspace
+      - run: pwd
+      - run: ls -lart
+      - run:
+          name: Deploy STG
+          command: |
+            echo "Deploying STG"
+            echo "Deploy STG Done!"
+
 workflows:
   version: 2.1
   workflow-project:
@@ -77,24 +127,54 @@ workflows:
       - build-qas:
           context: org-global
           filters:
-            branches: { only: 'master' }
+            branches: { ignore: 'master' }
           requires:
             - checkout
+      - test:
+          context: org-global
+          filters:
+            branches: { ignore: 'master' }
+          requires:
+            - build-qas
       - request-approval-qas:
           context: org-global
           filters:
-            branches: { only: 'master' }
+            branches: { ignore: 'master' }
           requires:
-            - build-qas
+            - test
       - approve-qas:
           type: approval
           filters:
-            branches: { only: 'master' }
+            branches: { ignore: 'master' }
           requires:
             - request-approval-qas
       - deploy-qas:
           context: org-global
           filters:
-            branches: { only: 'master' }
+            branches: { ignore: 'master' }
           requires:
             - approve-qas
+      - build-stg:
+          context: org-global
+          filters:
+            branches: { only: 'master' }
+          requires:
+            - checkout
+      - request-approval-stg:
+          context: org-global
+          filters:
+            branches: { only: 'master' }
+          requires:
+            - build-stg
+      - approve-stg:
+          type: approval
+          filters:
+            branches: { only: 'master' }
+          requires:
+            - request-approval-stg
+      - deploy-stg:
+          context: org-global
+          filters:
+            branches: { only: 'master' }
+          requires:
+            - approve-stg
