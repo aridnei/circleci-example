@@ -84,7 +84,7 @@ workflows:
           context: org-global
           filters:
             branches: { only: 'master' }
-          requeres:
+          requires:
             - build-qas
       - approve-qas:
           type: approval
