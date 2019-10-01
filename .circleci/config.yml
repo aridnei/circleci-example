@@ -66,10 +66,6 @@ jobs:
             echo "Testing All..."
             touch build-qas.txt
             echo "Test All Done!"
-      - persist_to_workspace:
-          root: /tmp/persist_to_workspace
-          paths:
-            - .
 
   request-approval-qas:
     <<: *defaults
@@ -166,13 +162,14 @@ workflows:
           filters:
             branches: { ignore: 'master' }
           requires:
-            - build-qas
+            - checkout
       - request-approval-qas:
           context: org-global
           filters:
             branches: { ignore: 'master' }
           requires:
             - test
+            - build-qas
       - approve-qas:
           type: approval
           filters:
