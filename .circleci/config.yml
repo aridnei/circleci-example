@@ -97,4 +97,4 @@ workflows:
           filters:
             branches: { only: 'master' }
           requires:
-            - approval-qas
+            - approve-qas
