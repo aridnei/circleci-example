@@ -15,8 +15,8 @@ jobs:
       - run: ls -lart
       - restore_cache:
           keys:
-            - v1-dep-cache-{{ checksum "package.json" }}
-            - v1-dep-cache
+            - v2-dep-cache-{{ checksum "package.json" }}
+            - v2-dep-cache
       - run:
           name: Checkout
           command: |
@@ -25,7 +25,7 @@ jobs:
             touch node_modules/module-$(date +"%Y%m%d").txt
             echo "Checkout Done!"
       - save_cache:
-          key: v1-dep-cache-{{ checksum "package.json" }}
+          key: v2-dep-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
       - persist_to_workspace:
@@ -57,7 +57,7 @@ jobs:
       - attach_workspace:
           at: /tmp/persist_to_workspace
       - restore_cache:
-          key: v1-dep-cache-{{ checksum "package.json" }}
+          key: v2-dep-cache-{{ checksum "package.json" }}
       - run: pwd
       - run: ls -lart
       - run:
