@@ -70,7 +70,7 @@ jobs:
 
 workflows:
   version: 2.1
-  build-and-deploy:
+  workflow-project:
     jobs:
       - checkout:
           context: org-global
