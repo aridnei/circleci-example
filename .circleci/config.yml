@@ -167,9 +167,9 @@ workflows:
           context: org-global
           filters:
             branches: { ignore: 'master' }
-          requires:
-            - test
-            - build-qas
+          # requires:
+          #   - test
+          #   - build-qas
       - approve-qas:
           type: approval
           filters:
@@ -181,6 +181,8 @@ workflows:
           filters:
             branches: { ignore: 'master' }
           requires:
+            - test
+            - build-qas
             - approve-qas
       - build-stg:
           context: org-global

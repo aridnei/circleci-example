@@ -295,7 +295,7 @@ jobs:
 
 ```
 
-2. Workspace percistence
+2. Workspace persistence
 
 ```
 
